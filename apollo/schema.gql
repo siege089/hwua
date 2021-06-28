@@ -21,10 +21,30 @@ input PlayerSigninInput {
     password: String!
 }
 
+type Game {
+    game_id: ID!
+    player: Player!
+    players: [Player]!
+    winner: Player
+    complete: Boolean!
+    moves: [Move]!
+    created_at: String!
+    token: String
+}
+
+type Move {
+    move_id: ID!
+    position_x: Int!
+    position_y: Int!
+    player: Player!
+    created_at: String
+}
+
 type Query {
     loginUser(player: PlayerSigninInput): PlayerLogin
 }
 
 type Mutation {
     registerPlayer(new_player: RegisterPlayerInput): Player
+    registerGame: Game
 }

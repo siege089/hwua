@@ -24,3 +24,37 @@ query LoginUserQuery {
     }
   }
 }
+
+mutation RegisterGameMutation{
+  registerGame {
+    game_id
+    player {
+      player_id
+      username
+      created_at
+    }
+    players {
+      player_id
+      username
+      created_at
+    }
+    winner {
+      player_id
+      username
+      created_at
+    }
+    complete
+    moves {
+      move_id
+      position_x
+      position_y
+      player{
+        player_id
+        username
+        created_at
+      }
+    }
+    created_at
+    token
+  }
+}

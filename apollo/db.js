@@ -1,7 +1,6 @@
 import pg from 'pg'
 import { v4 as uuidv4 } from 'uuid';
 
-import dotenv from 'dotenv'
 
 const { Pool } = pg
 
@@ -10,20 +9,21 @@ const {
     createHmac
 } = await import('crypto');
 
+import dotenv from 'dotenv'
 dotenv.config()
 
 const SALT_LEN = 16
 
-const pool = new Pool({
+const poolConfig = {
     user: process.env.POSTGRES_USER,
     host: process.env.POSTGRES_HOST_DOCKER || process.env.POSTGRES_HOST,
     database: process.env.POSTGRES_DB,
     password: process.env.POSTGRES_PASSWORD,
     port: process.env.POSTGRES_PORT
-})
+}
+const pool = new Pool(poolConfig)
 
 let playersCache = []
-
 
 const generateSalt = () => {
     return randomBytes(Math.ceil(SALT_LEN / 2)).toString('hex').slice(0, SALT_LEN)
@@ -42,6 +42,32 @@ const playerMapping = (player) => {
         salt: player.salt,
         password: player.password,
         created_at: player.created_at
+    }
+}
+
+const gameMapping = async (game) => {
+    return {
+        game_id: game.game_id,
+        player_id: game.player_id,
+        complete: game.complete,
+        properties: game.properties,
+        created_at: game.created_at,
+        moves: await findMoves(game.game_id),
+        player: await findPlayer(game.player_id),
+        players: await Promise.all(game.properties.players.map(async player_id => await findPlayer(player_id))),
+        winner: await findPlayer(game.properties.winner)
+    }
+}
+
+const moveMapping = async (move) => {
+    return {
+        move_id: move.move_id,
+        game_id: move.game_id,
+        player_id: move.player_id,
+        position_x: move.position_x,
+        position_y: move.position_y,
+        created_at: move.created_at,
+        player: await findPlayer(move.player_id)
     }
 }
 
@@ -77,4 +103,34 @@ export async function signinUser(username, password) {
     if (user.password === hashedPassword)
         return user
     return undefined
+}
+
+export async function getIncompleteGames(player_id) {
+    const { rows } = await pool.query('SELECT * FROM game WHERE complete = false AND player_id = $1', [player_id])
+    if (rows.length === 0)
+        return undefined
+    return await Promise.all(rows.map(async row => await gameMapping(row)))
+}
+
+export async function createGame(player_id) {
+    const game_id = uuidv4()
+    const properties = {
+        players: [player_id]
+    }
+    await pool.query('INSERT INTO game(game_id, player_id, properties) VALUES ($1, $2, $3)', [game_id, player_id, properties])
+    return game_id
+}
+
+export async function findGame(game_id) {
+    const { rows } = await pool.query('SELECT * FROM game WHERE game_id = $1', [game_id])
+    if (rows.length === 0)
+        return undefined
+    return await gameMapping(rows[0])
+}
+
+export async function findMoves(game_id) {
+    const { rows } = await pool.query('SELECT * FROM move WHERE game_id = $1', [game_id])
+    if (rows.length === 0)
+        return []
+    return await Promise.all(rows.map(async row => await moveMapping(row)))
 }
