@@ -93,7 +93,7 @@ export const resolvers = {
         throw new ApolloError('Game creator goes first')
       if(game.complete)
         throw new ApolloError('Game Over')
-      if (game.moves[game.moves.length - 1] === player_id)
+      if (game.moves[game.moves.length - 1].player_id === player_id)
         throw new ApolloError('Not your turn')
       const move_id = await DB.saveMove(game.game_id, player_id, position_x, position_y)
       return await DB.findMove(move_id)

@@ -129,7 +129,7 @@ export async function findGame(game_id) {
 }
 
 export async function findMoves(game_id) {
-    const { rows } = await pool.query('SELECT * FROM move WHERE game_id = $1 ORDER BY created_at desc', [game_id])
+    const { rows } = await pool.query('SELECT * FROM move WHERE game_id = $1 ORDER BY created_at asc', [game_id])
     if (rows.length === 0)
         return []
     return await Promise.all(rows.map(async row => await moveMapping(row)))
