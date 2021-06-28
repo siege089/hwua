@@ -53,7 +53,7 @@ const gameMapping = async (game) => {
         properties: game.properties,
         created_at: game.created_at,
         moves: await findMoves(game.game_id),
-        player: await findPlayer(game.player_id),
+        creator: await findPlayer(game.player_id),
         players: await Promise.all(game.properties.players.map(async player_id => await findPlayer(player_id))),
         winner: await findPlayer(game.properties.winner)
     }
@@ -133,4 +133,8 @@ export async function findMoves(game_id) {
     if (rows.length === 0)
         return []
     return await Promise.all(rows.map(async row => await moveMapping(row)))
+}
+
+export async function saveGame(game) {
+    await pool.query('UPDATE game SET complete = $2, properties = $3 WHERE game_id = $1', [game.game_id, game.complete, game.properties])
 }

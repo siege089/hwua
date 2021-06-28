@@ -27,34 +27,74 @@ query LoginUserQuery {
 
 mutation RegisterGameMutation{
   registerGame {
-    game_id
-    player {
-      player_id
-      username
-      created_at
-    }
-    players {
-      player_id
-      username
-      created_at
-    }
-    winner {
-      player_id
-      username
-      created_at
-    }
-    complete
-    moves {
-      move_id
-      position_x
-      position_y
-      player{
+    game {
+      game_id
+      creator {
         player_id
         username
         created_at
       }
+      players {
+        player_id
+        username
+        created_at
+      }
+      winner {
+        player_id
+        username
+        created_at
+      }
+      complete
+      moves {
+        move_id
+        position_x
+        position_y
+        player{
+          player_id
+          username
+          created_at
+        }
+      }
+      created_at
     }
-    created_at
     token
   }
+}
+
+mutation JoinGameMutation {
+    joinGame(game: {
+        game_id: "096db2ad-ec73-47c8-8bed-f1c35f0bca66"
+    }) {
+    	game {
+        game_id
+        creator {
+          player_id
+          username
+          created_at
+        }
+        players {
+          player_id
+          username
+          created_at
+        }
+        winner {
+          player_id
+          username
+          created_at
+        }
+        complete
+        moves {
+          move_id
+          position_x
+          position_y
+          player{
+            player_id
+            username
+            created_at
+          }
+        }
+        created_at
+      }
+      token
+    }
 }
