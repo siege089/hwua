@@ -129,7 +129,7 @@ export async function findGame(game_id) {
 }
 
 export async function findMoves(game_id) {
-    const { rows } = await pool.query('SELECT * FROM move WHERE game_id = $1', [game_id])
+    const { rows } = await pool.query('SELECT * FROM move WHERE game_id = $1 ORDER BY created_at desc', [game_id])
     if (rows.length === 0)
         return []
     return await Promise.all(rows.map(async row => await moveMapping(row)))
@@ -137,4 +137,17 @@ export async function findMoves(game_id) {
 
 export async function saveGame(game) {
     await pool.query('UPDATE game SET complete = $2, properties = $3 WHERE game_id = $1', [game.game_id, game.complete, game.properties])
+}
+
+export async function saveMove(game_id, player_id, position_x, position_y) {
+    const move_id = uuidv4()
+    await pool.query('INSERT INTO move(move_id, game_id, player_id, position_x, position_y) VALUES ($1, $2, $3, $4, $5)', [move_id, game_id, player_id, position_x, position_y])
+    return move_id
+}
+
+export async function findMove(move_id) {
+    const { rows } = await pool.query('SELECT * FROM move WHERE move_id = $1', [move_id])
+    if (rows.length === 0)
+        return undefined
+    return await moveMapping(rows[0])
 }

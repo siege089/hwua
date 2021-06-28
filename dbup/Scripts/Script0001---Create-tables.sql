@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS  move (
     move_id uuid PRIMARY KEY,
     game_id uuid,
     player_id uuid,
-    num int,
     position_x int,
     position_y int,
     created_at timestamp DEFAULT now(),

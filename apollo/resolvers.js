@@ -81,6 +81,22 @@ export const resolvers = {
           game_id: game.game_id,
         }, process.env.JWT_SECRET)
       }
+    },
+    saveMove: async (root, args, context) => {
+      const { player_id } = requiresUser(context)
+      const game = requiresGame(context)
+      const {position_x, position_y} = args.move
+      const existingMove = game.moves.find(move => move.position_x === position_x && move.position_y == position_y)
+      if(existingMove !== undefined)
+        throw new ApolloError('Position Taken')
+      if(game.moves.length === 0 && game.creator.player_id !== player_id)
+        throw new ApolloError('Game creator goes first')
+      if(game.complete)
+        throw new ApolloError('Game Over')
+      if (game.moves[game.moves.length - 1] === player_id)
+        throw new ApolloError('Not your turn')
+      const move_id = await DB.saveMove(game.game_id, player_id, position_x, position_y)
+      return await DB.findMove(move_id)
     }
   }
 };

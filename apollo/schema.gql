@@ -53,6 +53,11 @@ input JoinGameInput {
     game_id: ID!
 }
 
+input MoveInput {
+    position_x: Int!
+    position_y: Int!
+}
+
 type Query {
     loginUser(player: PlayerSigninInput): PlayerLogin
 }
@@ -61,4 +66,5 @@ type Mutation {
     registerPlayer(new_player: RegisterPlayerInput): Player
     registerGame: CreateGame
     joinGame(game: JoinGameInput): JoinGame
+    saveMove(move: MoveInput): Move
 }
