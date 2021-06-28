@@ -35,6 +35,10 @@ export const resolvers = {
           }),
         player: user
       }
+    },
+    openGames: async (root, args, context) => {
+      requiresUser(context)
+      return await DB.getOpenGames()
     }
   },
   Mutation: {
@@ -85,13 +89,13 @@ export const resolvers = {
     saveMove: async (root, args, context) => {
       const { player_id } = requiresUser(context)
       const game = requiresGame(context)
-      const {position_x, position_y} = args.move
+      const { position_x, position_y } = args.move
       const existingMove = game.moves.find(move => move.position_x === position_x && move.position_y == position_y)
-      if(existingMove !== undefined)
+      if (existingMove !== undefined)
         throw new ApolloError('Position Taken')
-      if(game.moves.length === 0 && game.creator.player_id !== player_id)
+      if (game.moves.length === 0 && game.creator.player_id !== player_id)
         throw new ApolloError('Game creator goes first')
-      if(game.complete)
+      if (game.complete)
         throw new ApolloError('Game Over')
       if (game.moves[game.moves.length - 1].player_id === player_id)
         throw new ApolloError('Not your turn')

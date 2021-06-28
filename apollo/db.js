@@ -59,6 +59,17 @@ const gameMapping = async (game) => {
     }
 }
 
+const gameMappingSimple = async (game) => {
+    return {
+        game_id: game.game_id,
+        player_id: game.player_id,
+        complete: game.complete,
+        properties: game.properties,
+        created_at: game.created_at,
+        creator: await findPlayer(game.player_id)
+    }
+}
+
 const moveMapping = async (move) => {
     return {
         move_id: move.move_id,
@@ -150,4 +161,15 @@ export async function findMove(move_id) {
     if (rows.length === 0)
         return undefined
     return await moveMapping(rows[0])
+}
+
+export async function getOpenGames() {
+    const { rows } = await pool.query(`WITH cte_num_players (game_id, num_players) AS (
+        SELECT game_id, json_array_length(json(properties->>'players')) from game
+      )
+      SELECT g.* FROM game g JOIN cte_num_players n ON g.game_id = n.game_id
+      WHERE num_players = 1`)
+    if (rows.length === 0)
+        return []
+    return await Promise.all(rows.map(async row => await gameMappingSimple(row)))
 }

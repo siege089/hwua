@@ -98,3 +98,15 @@ mutation JoinGameMutation {
       token
     }
 }
+
+query OpenGamesQuery {
+  openGames{
+    game_id
+    creator {
+      player_id
+      username
+      created_at
+    }
+    created_at
+  }
+}

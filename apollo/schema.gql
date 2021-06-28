@@ -31,6 +31,12 @@ type Game {
     created_at: String!
 }
 
+type GameInfo {
+    game_id: ID!
+    creator: Player!
+    created_at: String!
+}
+
 type Move {
     move_id: ID!
     position_x: Int!
@@ -60,6 +66,7 @@ input MoveInput {
 
 type Query {
     loginUser(player: PlayerSigninInput): PlayerLogin
+    openGames: [GameInfo]
 }
 
 type Mutation {
