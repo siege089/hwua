@@ -1,0 +1,26 @@
+mutation RegisterPlayerMutation {
+  registerPlayer(new_player: {
+    username: "siege"
+    password: "test"
+    confirm_password: "test"
+  }) {
+    player_id,
+    username,
+    created_at
+  }
+}
+
+query LoginUserQuery {
+  loginUser(player: {
+    username: "siege"
+    password: "test"
+  }) {
+    status
+    token
+    player {
+      player_id
+      username
+      created_at
+    }
+  }
+}

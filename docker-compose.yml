@@ -17,3 +17,14 @@ services:
     env_file:
       - .env
     restart: on-failure
+
+  apollo:
+    build:
+      context: apollo
+      dockerfile: ./Dockerfile
+    depends_on:
+      - database
+    ports:
+      - 4000:4000
+    environment:
+      POSTGRES_HOST_DOCKER: 'database'

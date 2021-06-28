@@ -1,0 +1,30 @@
+type Player {
+    player_id: ID!
+    username: String!
+    created_at: String!
+}
+
+input RegisterPlayerInput {
+    username: String!
+    password: String!
+    confirm_password: String!
+}
+
+type PlayerLogin {
+    status: Boolean!
+    player: Player
+    token: String
+}
+
+input PlayerSigninInput {
+    username: String!
+    password: String!
+}
+
+type Query {
+    loginUser(player: PlayerSigninInput): PlayerLogin
+}
+
+type Mutation {
+    registerPlayer(new_player: RegisterPlayerInput): Player
+}
