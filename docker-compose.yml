@@ -28,3 +28,13 @@ services:
       - 4000:4000
     environment:
       POSTGRES_HOST_DOCKER: 'database'
+    restart: on-failure
+
+  react:
+    build:
+      context: react
+      dockerfile: ./Dockerfile
+    depends_on:
+      - apollo
+    ports:
+      - 3000:3000

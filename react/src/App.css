@@ -1,0 +1,35 @@
+.App {
+  text-align: center;
+}
+
+.board {
+  width: calc(20px * 50);
+  height: calc(20px * 50);
+  display: grid;
+  grid-template-columns: repeat(50, 1fr);
+  margin: auto;
+}
+
+.tile {
+  height: 20px;
+  width: 20px;
+  border: 1px solid black;
+  font-weight: bold;
+}
+
+.tile-selectable:hover {
+  background-color: yellow;
+}
+
+.tile.green {
+  background-color: greenyellow;
+}
+
+.tile.blue {
+  background-color: cornflowerblue;
+  color: white;
+}
+
+.tile.winning {
+  background-color: deeppink !important;
+}
