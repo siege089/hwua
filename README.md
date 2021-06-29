@@ -12,3 +12,6 @@ A dotnet core console up utilizing the dbup nuget package to perform database mi
 
 ### apollo
 A apollo graphql server for handling communication to the database
+
+### react
+A react app made with CRA that handles playing the game
